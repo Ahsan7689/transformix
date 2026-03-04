@@ -7,12 +7,20 @@ export default defineConfig({
     exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util']
   },
   server: {
+    // NO Cross-Origin-Embedder-Policy header at all
+    // This allows external images (Pollinations, etc.) to load freely
+    // ffmpeg still works via its own WASM loading mechanism
     headers: {
-      // COOP is fine — keeps window isolation
       'Cross-Origin-Opener-Policy': 'same-origin',
-      // REMOVED 'require-corp' — it blocked all cross-origin images (Pollinations, etc.)
-      // ffmpeg WASM works without COEP in modern Vite via SharedArrayBuffer fallback
-      'Cross-Origin-Embedder-Policy': 'credentialless',
+    },
+    // Proxy Pollinations requests through Vite to avoid CORS/COEP entirely
+    proxy: {
+      '/api/image': {
+        target: 'https://image.pollinations.ai',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/image/, ''),
+        secure: false,
+      }
     }
   }
 })

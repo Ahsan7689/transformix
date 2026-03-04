@@ -11,7 +11,8 @@ const NAV_LINKS = [
   { to: '/img-to-pdf', label: 'Image→PDF', icon: 'fa-solid fa-file-pdf' },
   { to: '/shorten', label: 'Short Link', icon: 'fa-solid fa-link' },
   { to: '/metadata', label: 'Metadata', icon: 'fa-solid fa-shield-halved' },
-  { to: '/imagine', label: 'AI Images', icon: 'fa-solid fa-wand-magic-sparkles' },
+  { to: '/compress', label: 'Compressor',  icon: 'fa-solid fa-compress-arrows-alt' },
+  { to: '/qr',       label: 'QR Code',     icon: 'fa-solid fa-qrcode' },
   { to: '/about', label: 'About', icon: 'fa-solid fa-circle-info' },
 ]
 

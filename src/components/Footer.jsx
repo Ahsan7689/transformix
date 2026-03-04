@@ -7,7 +7,8 @@ const LINKS = {
     { to: '/img-to-pdf', label: 'Image to PDF' },
     { to: '/shorten', label: 'Link Shortener' },
     { to: '/metadata', label: 'Metadata Remover' },
-    { to: '/imagine', label: 'AI Image Generator' },
+    { to: '/compress', label: 'Image Compressor' },
+    { to: '/qr',       label: 'QR Code Generator' },
   ],
   Company: [
     { to: '/', label: 'Home' },
