@@ -14,6 +14,7 @@ const NAV_LINKS = [
   { to: '/compress', label: 'Compressor',  icon: 'fa-solid fa-compress-arrows-alt' },
   { to: '/qr',       label: 'QR Code',     icon: 'fa-solid fa-qrcode' },
   { to: '/palette',  label: 'Colors',      icon: 'fa-solid fa-palette' },
+  { to: '/about', label: 'About', icon: 'fa-solid fa-circle-info' },
 ]
 
 export default function Navbar() {
@@ -69,22 +70,13 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2.5 no-underline">
-            <div
-              className="flex items-center justify-center w-9 h-9 rounded-xl font-bold text-sm"
-              style={{
-                background: 'linear-gradient(135deg, var(--primary), var(--accent))',
-                color: '#0a0a0a',
-                fontFamily: 'var(--font-display)',
-              }}
-            >
-              Tx
-            </div>
-            <span
-              style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.15rem', color: 'var(--text)' }}
-            >
-              Transformix
-            </span>
+          <Link to="/" className="flex items-center gap-2 no-underline">
+            <img
+              src="https://rzhnxywqmlbvldmqmmsi.supabase.co/storage/v1/object/public/Content/Untitled%20design.png"
+              alt="Transformix"
+              height="40"
+              style={{ display: 'block', flexShrink: 0, objectFit: 'contain', maxHeight: 40 }}
+            />
           </Link>
 
           {/* Desktop Nav Links */}

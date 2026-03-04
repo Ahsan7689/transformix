@@ -25,20 +25,12 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {/* Brand */}
           <div>
-            <Link to="/" className="flex items-center gap-2.5 no-underline mb-4" style={{ textDecoration: 'none' }}>
-              <div
-                className="flex items-center justify-center w-9 h-9 rounded-xl font-bold text-sm"
-                style={{
-                  background: 'linear-gradient(135deg, var(--primary), var(--accent))',
-                  color: '#0a0a0a',
-                  fontFamily: 'var(--font-display)',
-                }}
-              >
-                Tx
-              </div>
-              <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, color: 'var(--text)' }}>
-                Transformix
-              </span>
+            <Link to="/" className="flex items-center gap-2 no-underline mb-4" style={{ textDecoration: 'none' }}>
+              <img
+                src="https://rzhnxywqmlbvldmqmmsi.supabase.co/storage/v1/object/public/Content/Untitled%20design.png"
+                alt="Transformix"
+                style={{ display: 'block', objectFit: 'contain', maxHeight: 44 }}
+              />
             </Link>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', lineHeight: 1.65, maxWidth: 260 }}>
               The all-in-one file toolkit. Convert, compress, generate, and protect — all for free.
