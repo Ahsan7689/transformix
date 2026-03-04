@@ -29,7 +29,7 @@ export default function Footer() {
               <img
                 src="https://rzhnxywqmlbvldmqmmsi.supabase.co/storage/v1/object/public/Content/Untitled%20design.png"
                 alt="Transformix"
-                style={{ display: 'block', objectFit: 'contain', maxHeight: 44 }}
+                style={{ display: 'block', objectFit: 'contain', maxHeight: 36 }}
               />
             </Link>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', lineHeight: 1.65, maxWidth: 260 }}>

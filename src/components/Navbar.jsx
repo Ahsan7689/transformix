@@ -14,7 +14,6 @@ const NAV_LINKS = [
   { to: '/compress', label: 'Compressor',  icon: 'fa-solid fa-compress-arrows-alt' },
   { to: '/qr',       label: 'QR Code',     icon: 'fa-solid fa-qrcode' },
   { to: '/palette',  label: 'Colors',      icon: 'fa-solid fa-palette' },
-  { to: '/about', label: 'About', icon: 'fa-solid fa-circle-info' },
 ]
 
 export default function Navbar() {
@@ -74,8 +73,8 @@ export default function Navbar() {
             <img
               src="https://rzhnxywqmlbvldmqmmsi.supabase.co/storage/v1/object/public/Content/Untitled%20design.png"
               alt="Transformix"
-              height="40"
-              style={{ display: 'block', flexShrink: 0, objectFit: 'contain', maxHeight: 40 }}
+              height="28"
+              style={{ display: 'block', flexShrink: 0, objectFit: 'contain', maxHeight: 28 }}
             />
           </Link>
 
