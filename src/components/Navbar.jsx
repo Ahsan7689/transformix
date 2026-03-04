@@ -13,7 +13,7 @@ const NAV_LINKS = [
   { to: '/metadata', label: 'Metadata', icon: 'fa-solid fa-shield-halved' },
   { to: '/compress', label: 'Compressor',  icon: 'fa-solid fa-compress-arrows-alt' },
   { to: '/qr',       label: 'QR Code',     icon: 'fa-solid fa-qrcode' },
-  { to: '/about', label: 'About', icon: 'fa-solid fa-circle-info' },
+  { to: '/palette',  label: 'Colors',      icon: 'fa-solid fa-palette' },
 ]
 
 export default function Navbar() {

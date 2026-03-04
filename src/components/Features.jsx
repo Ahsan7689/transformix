@@ -63,6 +63,16 @@ const FEATURES = [
     stat: '1024px',
     statLabel: 'Max export resolution',
   },
+  {
+    icon: 'fa-solid fa-palette',
+    label: 'Color Palette Generator',
+    to: '/palette',
+    color: '#A3B9F8',
+    desc: 'Extract dominant colors from any image, generate full palettes from a base color, or browse curated collections. Export as CSS variables or JSON array.',
+    formats: ['Extract', 'Generate', 'Curated', 'CSS Export', 'HEX', 'RGB', 'HSL'],
+    stat: '8',
+    statLabel: 'Colors per palette',
+  },
 ]
 
 function FeatureCard({ feature, i }) {

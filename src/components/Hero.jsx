@@ -105,11 +105,13 @@ const ANIM_TYPES = [
 ]
 
 const SERVICES = [
-  { to: '/img-to-pdf', icon: 'fa-solid fa-file-pdf', label: 'Image to PDF', color: '#ef4444', desc: 'Merge images into a single PDF instantly' },
-  { to: '/convert', icon: 'fa-solid fa-shuffle', label: 'File Converter', color: '#75BDE0', desc: 'Convert any format to any format' },
-  { to: '/shorten', icon: 'fa-solid fa-link', label: 'Link Shortener', color: '#F8D49B', desc: 'Shorten & track your URLs' },
-  { to: '/metadata', icon: 'fa-solid fa-shield-halved', label: 'Metadata Remover', color: '#a855f7', desc: 'Strip hidden data from files' },
-  { to: '/imagine', icon: 'fa-solid fa-wand-magic-sparkles', label: 'AI Image Gen', color: '#F89B9B', desc: 'Generate images with Gemini AI' },
+  { to: '/img-to-pdf',  icon: 'fa-solid fa-file-pdf',            label: 'Image to PDF',    color: '#ef4444', desc: 'Merge images into a single PDF instantly' },
+  { to: '/convert',     icon: 'fa-solid fa-shuffle',              label: 'File Converter',  color: '#75BDE0', desc: 'Convert 50+ formats in your browser' },
+  { to: '/shorten',     icon: 'fa-solid fa-link',                 label: 'Link Shortener',  color: '#F8D49B', desc: 'Shorten & track your URLs' },
+  { to: '/metadata',    icon: 'fa-solid fa-shield-halved',        label: 'Metadata Remover',color: '#a855f7', desc: 'Strip hidden data from files' },
+  { to: '/compress',    icon: 'fa-solid fa-compress-arrows-alt',  label: 'Image Compressor',color: '#9BF8D0', desc: 'Shrink images up to 90% smaller' },
+  { to: '/qr',          icon: 'fa-solid fa-qrcode',               label: 'QR Generator',    color: '#F8E3A3', desc: 'Generate QR codes for anything' },
+  { to: '/palette',     icon: 'fa-solid fa-palette',              label: 'Color Palette',   color: '#A3B9F8', desc: 'Extract & generate color palettes' },
 ]
 
 export default function Hero() {
@@ -247,7 +249,7 @@ export default function Hero() {
             }}
           >
             <RotatingText
-              texts={['Generate', 'Shorten', 'Clean', 'Protect', 'Optimize', 'Create']}
+              texts={['Convert', 'Compress', 'Shorten', 'Clean', 'Protect', 'Design']}
               mainClassName=""
               splitBy="characters"
               staggerFrom="first"
@@ -265,7 +267,7 @@ export default function Hero() {
           transition={{ duration: 0.6, delay: 0.35 }}
           style={{ color: 'var(--text-muted)', fontSize: '1.05rem', maxWidth: 520, margin: '0 auto 2.5rem', lineHeight: 1.65 }}
         >
-          The complete file toolkit — convert formats, generate AI images, shorten links, strip metadata, and build PDFs. All free, no sign-up required.
+          7 powerful browser-based tools — convert files, compress images, generate QR codes, extract color palettes, shorten links and more. All free, no sign-up required.
         </motion.p>
 
         {/* CTAs */}
@@ -279,9 +281,9 @@ export default function Hero() {
             <i className="fa-solid fa-rocket"></i>
             Start for Free
           </Link>
-          <Link to="/imagine" className="btn-outline" style={{ fontSize: '1rem', padding: '13px 28px' }}>
-            <i className="fa-solid fa-wand-magic-sparkles"></i>
-            Try AI Images
+          <Link to="/compress" className="btn-outline" style={{ fontSize: '1rem', padding: '13px 28px' }}>
+            <i className="fa-solid fa-compress-arrows-alt"></i>
+            Compress Images
           </Link>
         </motion.div>
 
@@ -304,9 +306,9 @@ export default function Hero() {
           transition={{ delay: 0.8 }}
           className="section-eyebrow text-center mb-8"
         >
-          Everything you need
+          7 tools · everything you need
         </motion.p>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4">
           {SERVICES.map((svc, i) => (
             <Link key={svc.to} to={svc.to} className="service-card no-underline" style={{ textDecoration: 'none', opacity: 0 }}>
               <div

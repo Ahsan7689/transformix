@@ -16,6 +16,7 @@ import LinkShortener from './pages/LinkShortener'
 import MetadataRemover from './pages/MetadataRemover'
 import ImageCompressor from './pages/ImageCompressor'
 import QRGenerator from './pages/QRGenerator'
+import ColorPalette from './pages/ColorPalette'
 import Profile from './pages/Profile'
 import About from './pages/About'
 import ShortLinkRedirect from './pages/ShortLinkRedirect'
@@ -47,6 +48,7 @@ function AppInner() {
         <Route path="/metadata"   element={<MetadataRemover />} />
         <Route path="/compress"    element={<ImageCompressor />} />
         <Route path="/qr"          element={<QRGenerator />} />
+        <Route path="/palette"     element={<ColorPalette />} />
         <Route path="/profile"    element={<Profile />} />
         <Route path="/about"      element={<About />} />
         <Route path="/s/:code"    element={<ShortLinkRedirect />} />

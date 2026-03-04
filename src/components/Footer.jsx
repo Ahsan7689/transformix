@@ -9,6 +9,7 @@ const LINKS = {
     { to: '/metadata', label: 'Metadata Remover' },
     { to: '/compress', label: 'Image Compressor' },
     { to: '/qr',       label: 'QR Code Generator' },
+    { to: '/palette',  label: 'Color Palette Generator' },
   ],
   Company: [
     { to: '/', label: 'Home' },
