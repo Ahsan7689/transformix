@@ -5,7 +5,8 @@ import toast from 'react-hot-toast'
 import { useCredit } from '../context/CreditContext'
 import CreditGuard from '../components/CreditGuard'
 
-// Extract dominant colors from image using canvas
+// ─── Color utilities ──────────────────────────────────────────────────────────
+
 function extractColors(imgEl, count = 8) {
   const canvas = document.createElement('canvas')
   const size = 100
@@ -14,8 +15,6 @@ function extractColors(imgEl, count = 8) {
   const ctx = canvas.getContext('2d')
   ctx.drawImage(imgEl, 0, 0, size, size)
   const data = ctx.getImageData(0, 0, size, size).data
-
-  // Sample pixels and bucket into color groups
   const buckets = {}
   for (let i = 0; i < data.length; i += 16) {
     const r = Math.round(data[i]     / 32) * 32
@@ -26,18 +25,13 @@ function extractColors(imgEl, count = 8) {
     const key = `${r},${g},${b}`
     buckets[key] = (buckets[key] || 0) + 1
   }
-
   return Object.entries(buckets)
     .sort((a, b) => b[1] - a[1])
     .slice(0, count)
     .map(([key]) => {
       const [r, g, b] = key.split(',').map(Number)
-      return rgbToHex(r, g, b)
+      return '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('')
     })
-}
-
-function rgbToHex(r, g, b) {
-  return '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('')
 }
 
 function hexToRgb(hex) {
@@ -65,45 +59,54 @@ function hexToHsl(hex) {
   return `hsl(${Math.round(h * 360)}, ${Math.round(s * 100)}%, ${Math.round(l * 100)}%)`
 }
 
-// Preset curated palettes
+// ─── Data ────────────────────────────────────────────────────────────────────
+
 const CURATED = [
-  { name: 'Sunset Vibes',   colors: ['#FF6B6B','#FF8E53','#FFC107','#FF5722','#E91E63'] },
-  { name: 'Ocean Breeze',   colors: ['#00B4DB','#0083B0','#48CAE4','#90E0EF','#CAF0F8'] },
-  { name: 'Forest Walk',    colors: ['#1B4332','#2D6A4F','#40916C','#74C69D','#B7E4C7'] },
-  { name: 'Candy Pop',      colors: ['#FF99C8','#FCF6BD','#D0F4DE','#A9DEF9','#E4C1F9'] },
-  { name: 'Midnight',       colors: ['#0a0a0a','#1a1a2e','#16213e','#0f3460','#533483'] },
-  { name: 'Golden Hour',    colors: ['#F8C471','#F0B04A','#E67E22','#CA6F1E','#7E5109'] },
-  { name: 'Neon City',      colors: ['#FF00FF','#00FFFF','#FF6600','#00FF66','#6600FF'] },
-  { name: 'Pastel Dream',   colors: ['#FFDFD3','#FFD6E0','#C7CEEA','#B5EAD7','#FFEAA7'] },
+  { name: 'Sunset Vibes',  colors: ['#FF6B6B','#FF8E53','#FFC107','#FF5722','#E91E63'] },
+  { name: 'Ocean Breeze',  colors: ['#00B4DB','#0083B0','#48CAE4','#90E0EF','#CAF0F8'] },
+  { name: 'Forest Walk',   colors: ['#1B4332','#2D6A4F','#40916C','#74C69D','#B7E4C7'] },
+  { name: 'Candy Pop',     colors: ['#FF99C8','#FCF6BD','#D0F4DE','#A9DEF9','#E4C1F9'] },
+  { name: 'Midnight',      colors: ['#0a0a0a','#1a1a2e','#16213e','#0f3460','#533483'] },
+  { name: 'Golden Hour',   colors: ['#F8C471','#F0B04A','#E67E22','#CA6F1E','#7E5109'] },
+  { name: 'Neon City',     colors: ['#FF00FF','#00FFFF','#FF6600','#00FF66','#6600FF'] },
+  { name: 'Pastel Dream',  colors: ['#FFDFD3','#FFD6E0','#C7CEEA','#B5EAD7','#FFEAA7'] },
 ]
 
-function ColorSwatch({ hex, size = 'md' }) {
-  const [copied, setCopied] = useState(false)
+const TABS = [
+  { key: 'extract',  label: 'Extract',  fullLabel: 'Extract from Image', icon: 'fa-solid fa-image' },
+  { key: 'generate', label: 'Generate', fullLabel: 'Generate from Color', icon: 'fa-solid fa-droplet' },
+  { key: 'curated',  label: 'Curated',  fullLabel: 'Curated Palettes',   icon: 'fa-solid fa-swatchbook' },
+]
 
-  const copy = (text) => {
-    navigator.clipboard.writeText(text).then(() => {
+// ─── ColorSwatch — responsive, stacks on mobile ───────────────────────────────
+
+function ColorSwatch({ hex }) {
+  const [copied, setCopied] = useState(false)
+  const [fmt, setFmt] = useState('HEX')
+
+  const getVal = () => fmt === 'HEX' ? hex : fmt === 'RGB' ? hexToRgb(hex) : hexToHsl(hex)
+
+  const copy = (val) => {
+    navigator.clipboard.writeText(val).then(() => {
       setCopied(true)
-      toast.success('Copied: ' + text)
+      toast.success('Copied: ' + val)
       setTimeout(() => setCopied(false), 1500)
     })
   }
 
-  const isLarge = size === 'lg'
-
   return (
     <motion.div
-      whileHover={{ y: -4, scale: 1.03 }}
+      whileHover={{ y: -3 }}
       transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-      className="group relative cursor-pointer flex-1"
-      style={{ minWidth: isLarge ? 80 : 60 }}
+      style={{ flex: '1 1 70px', minWidth: 0, cursor: 'pointer' }}
     >
       {/* Color block */}
       <div
-        onClick={() => copy(hex)}
+        onClick={() => copy(getVal())}
         style={{
           background: hex,
-          height: isLarge ? 120 : 80,
-          borderRadius: 12,
+          height: 'clamp(60px, 12vw, 110px)',
+          borderRadius: 10,
           border: '1px solid rgba(255,255,255,0.08)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           transition: 'all 0.2s',
@@ -112,42 +115,54 @@ function ColorSwatch({ hex, size = 'md' }) {
         <AnimatePresence>
           {copied && (
             <motion.div initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}>
-              <i className="fa-solid fa-check" style={{ color: 'white', filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.5))' }}></i>
+              <i className="fa-solid fa-check" style={{ color: 'white', filter: 'drop-shadow(0 1px 4px rgba(0,0,0,0.6))' }}></i>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
 
-      {/* Hex label */}
-      <div className="mt-2 text-center">
-        <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: 'var(--text)', fontWeight: 700 }}>{hex.toUpperCase()}</p>
-        {isLarge && (
-          <div className="flex justify-center gap-1 mt-1 flex-wrap">
-            {['HEX','RGB','HSL'].map(fmt => (
-              <button key={fmt} onClick={() => copy(fmt === 'HEX' ? hex : fmt === 'RGB' ? hexToRgb(hex) : hexToHsl(hex))}
-                style={{ fontSize: '0.62rem', padding: '2px 6px', borderRadius: 5, cursor: 'pointer',
-                  background: 'var(--surface-2)', border: '1px solid var(--border)', color: 'var(--text-muted)',
-                  fontFamily: 'var(--font-mono)' }}>
-                {fmt}
-              </button>
-            ))}
-          </div>
-        )}
+      {/* HEX label + format buttons */}
+      <div style={{ marginTop: 6, textAlign: 'center' }}>
+        <p
+          onClick={() => copy(hex)}
+          style={{ fontFamily: 'var(--font-mono)', fontSize: 'clamp(0.58rem, 1.5vw, 0.72rem)',
+            color: 'var(--text)', fontWeight: 700, cursor: 'pointer',
+            whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          {hex.toUpperCase()}
+        </p>
+        {/* Format toggle buttons — hidden on very small screens, shown on sm+ */}
+        <div className="hidden sm:flex justify-center gap-1 mt-1 flex-wrap">
+          {['HEX','RGB','HSL'].map(f => (
+            <button key={f}
+              onClick={() => { setFmt(f); copy(f === 'HEX' ? hex : f === 'RGB' ? hexToRgb(hex) : hexToHsl(hex)) }}
+              style={{
+                fontSize: '0.6rem', padding: '2px 5px', borderRadius: 4, cursor: 'pointer',
+                background: fmt === f ? 'var(--primary)' : 'var(--surface-2)',
+                color: fmt === f ? '#0a0a0a' : 'var(--text-muted)',
+                border: '1px solid ' + (fmt === f ? 'var(--primary)' : 'var(--border)'),
+                fontFamily: 'var(--font-mono)', fontWeight: 600,
+              }}>
+              {f}
+            </button>
+          ))}
+        </div>
       </div>
     </motion.div>
   )
 }
 
+// ─── Main Content ─────────────────────────────────────────────────────────────
+
 function Content() {
   const { useCredit: consume } = useCredit()
-  const [tab,      setTab]      = useState('extract') // extract | curated | generate
-  const [palette,  setPalette]  = useState([])
-  const [imgSrc,   setImgSrc]   = useState(null)
-  const [loading,  setLoading]  = useState(false)
-  const [genBase,  setGenBase]  = useState('#6366f1')
+  const [tab,     setTab]     = useState('extract')
+  const [palette, setPalette] = useState([])
+  const [imgSrc,  setImgSrc]  = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [genBase, setGenBase] = useState('#6366f1')
   const imgRef = useRef(null)
 
-  // ── EXTRACT from image ──
+  // ── Extract ──
   const onDrop = useCallback(async (accepted) => {
     const file = accepted[0]
     if (!file) return
@@ -158,8 +173,7 @@ function Content() {
     setImgSrc(url)
     const img = new Image()
     img.onload = () => {
-      const colors = extractColors(img, 8)
-      setPalette(colors)
+      setPalette(extractColors(img, 8))
       setLoading(false)
       toast.success('Palette extracted!')
     }
@@ -168,41 +182,35 @@ function Content() {
   }, [consume])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop, accept: { 'image/*': ['.jpg', '.jpeg', '.png', '.webp', '.gif'] }, multiple: false
+    onDrop, accept: { 'image/*': ['.jpg','.jpeg','.png','.webp','.gif'] }, multiple: false
   })
 
-  // ── GENERATE from base color ──
+  // ── Generate ──
   const generateFromColor = async () => {
     const ok = await consume()
     if (!ok) return toast.error('No credits remaining')
-
-    const r = parseInt(genBase.slice(1, 3), 16)
-    const g = parseInt(genBase.slice(3, 5), 16)
-    const b = parseInt(genBase.slice(5, 7), 16)
-
-    // Generate complementary, analogous, triadic, shades
-    const generated = []
-    // Original
-    generated.push(genBase)
-    // Lighter shades
-    for (const factor of [0.8, 0.6, 0.4, 0.2]) {
-      const nr = Math.round(r + (255 - r) * (1 - factor))
-      const ng = Math.round(g + (255 - g) * (1 - factor))
-      const nb = Math.round(b + (255 - b) * (1 - factor))
-      generated.push(rgbToHex(nr, ng, nb))
+    const r = parseInt(genBase.slice(1,3),16)
+    const g = parseInt(genBase.slice(3,5),16)
+    const b = parseInt(genBase.slice(5,7),16)
+    const out = [genBase]
+    for (const f of [0.8,0.6,0.4,0.2]) {
+      out.push('#' + [
+        Math.round(r+(255-r)*(1-f)),
+        Math.round(g+(255-g)*(1-f)),
+        Math.round(b+(255-b)*(1-f)),
+      ].map(v=>v.toString(16).padStart(2,'0')).join(''))
     }
-    // Darker shades
-    for (const factor of [0.75, 0.5, 0.25]) {
-      generated.push(rgbToHex(Math.round(r * factor), Math.round(g * factor), Math.round(b * factor)))
+    for (const f of [0.75,0.5,0.25]) {
+      out.push('#' + [Math.round(r*f),Math.round(g*f),Math.round(b*f)]
+        .map(v=>v.toString(16).padStart(2,'0')).join(''))
     }
-    setPalette(generated.slice(0, 8))
+    setPalette(out.slice(0,8))
     toast.success('Palette generated!')
   }
 
   const exportCSS = () => {
     if (!palette.length) return
-    const css = ':root {\n' + palette.map((c, i) => `  --color-${i + 1}: ${c};`).join('\n') + '\n}'
-    navigator.clipboard.writeText(css)
+    navigator.clipboard.writeText(':root {\n' + palette.map((c,i) => `  --color-${i+1}: ${c};`).join('\n') + '\n}')
     toast.success('CSS variables copied!')
   }
 
@@ -213,9 +221,9 @@ function Content() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-6 pb-16">
+    <div style={{ maxWidth: 860, margin: '0 auto', padding: '0 16px 80px' }}>
 
-      {/* Header */}
+      {/* ── Header ── */}
       <div className="tool-header">
         <div className="flex items-center justify-center mb-4">
           <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl"
@@ -227,23 +235,22 @@ function Content() {
         <p>Extract colors from any image, generate palettes from a base color, or browse curated collections.</p>
       </div>
 
-      {/* Tabs */}
-      <div className="flex justify-center gap-2 mb-8">
-        {[
-          { key: 'extract',  label: 'Extract from Image', icon: 'fa-solid fa-image' },
-          { key: 'generate', label: 'Generate from Color', icon: 'fa-solid fa-droplet' },
-          { key: 'curated',  label: 'Curated Palettes',   icon: 'fa-solid fa-swatchbook' },
-        ].map(t => (
+      {/* ── Tabs — scroll on mobile ── */}
+      <div style={{ display: 'flex', gap: 8, marginBottom: 28, overflowX: 'auto',
+        paddingBottom: 4, WebkitOverflowScrolling: 'touch', justifyContent: 'center', flexWrap: 'wrap' }}>
+        {TABS.map(t => (
           <button key={t.key} onClick={() => { setTab(t.key); setPalette([]) }} style={{
-            display: 'inline-flex', alignItems: 'center', gap: 7,
-            padding: '9px 16px', borderRadius: 12, fontSize: '0.83rem', fontWeight: 600,
-            cursor: 'pointer', fontFamily: 'var(--font-display)', transition: 'all 0.2s',
+            display: 'inline-flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap',
+            padding: '9px 14px', borderRadius: 12, fontSize: '0.82rem', fontWeight: 600,
+            cursor: 'pointer', fontFamily: 'var(--font-display)', transition: 'all 0.2s', flexShrink: 0,
             background: tab === t.key ? 'var(--primary)' : 'var(--surface)',
             color: tab === t.key ? '#0a0a0a' : 'var(--text-muted)',
             border: '1px solid ' + (tab === t.key ? 'var(--primary)' : 'var(--border)'),
           }}>
             <i className={t.icon + ' text-xs'}></i>
-            <span className="hide-mobile">{t.label}</span>
+            {/* Short label on mobile, full on sm+ */}
+            <span className="sm:hidden">{t.label}</span>
+            <span className="hidden sm:inline">{t.fullLabel}</span>
           </button>
         ))}
       </div>
@@ -253,29 +260,28 @@ function Content() {
         <div>
           <div {...getRootProps()} style={{
             border: '2px dashed ' + (isDragActive ? 'var(--primary)' : 'var(--border)'),
-            borderRadius: 'var(--radius-xl)', padding: '2.5rem', textAlign: 'center',
-            cursor: 'pointer', background: isDragActive ? 'rgba(var(--primary-rgb),0.04)' : 'var(--surface)',
-            transition: 'all 0.2s', marginBottom: 24,
+            borderRadius: 'var(--radius-xl)', padding: 'clamp(1.25rem, 5vw, 2.5rem)',
+            textAlign: 'center', cursor: 'pointer',
+            background: isDragActive ? 'rgba(var(--primary-rgb),0.04)' : 'var(--surface)',
+            transition: 'all 0.2s', marginBottom: 20,
           }}>
             <input {...getInputProps()} />
             {imgSrc ? (
               <div className="flex flex-col items-center gap-3">
-                <img src={imgSrc} alt="uploaded"
-                  ref={imgRef}
-                  style={{ maxHeight: 180, maxWidth: '100%', borderRadius: 12, objectFit: 'cover' }} />
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.82rem' }}>Drop another image to re-extract</p>
+                <img src={imgSrc} alt="uploaded" ref={imgRef}
+                  style={{ maxHeight: 160, maxWidth: '100%', borderRadius: 10, objectFit: 'cover' }} />
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>Drop another image to re-extract</p>
               </div>
             ) : (
               <>
                 <i className="fa-solid fa-cloud-arrow-up text-3xl mb-3" style={{ color: '#A3B9F8', display: 'block' }}></i>
-                <p style={{ color: 'var(--text)', fontWeight: 600, marginBottom: 4 }}>
-                  {isDragActive ? 'Drop image here...' : 'Drop an image or click to browse'}
+                <p style={{ color: 'var(--text)', fontWeight: 600, marginBottom: 4, fontSize: 'clamp(0.85rem,3vw,1rem)' }}>
+                  {isDragActive ? 'Drop image here...' : 'Tap to browse or drop an image'}
                 </p>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.82rem' }}>JPG, PNG, WebP, GIF</p>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>JPG, PNG, WebP, GIF</p>
               </>
             )}
           </div>
-
           {loading && (
             <div className="text-center py-6">
               <i className="fa-solid fa-spinner fa-spin text-2xl" style={{ color: 'var(--primary)' }}></i>
@@ -287,21 +293,26 @@ function Content() {
 
       {/* ── TAB: Generate ── */}
       {tab === 'generate' && (
-        <div className="card p-6 mb-6" style={{ borderRadius: 'var(--radius-xl)' }}>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.82rem', marginBottom: 16 }}>
-            Pick a base color and we'll generate a full palette of shades and tints:
+        <div className="card p-5 mb-6" style={{ borderRadius: 'var(--radius-xl)' }}>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: 16 }}>
+            Pick a base color and we'll generate 8 shades and tints:
           </p>
-          <div className="flex items-center gap-4 flex-wrap">
-            <div className="flex items-center gap-3">
+          {/* Stack vertically on mobile, row on sm+ */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <input type="color" value={genBase} onChange={e => setGenBase(e.target.value)}
-                style={{ width: 56, height: 56, borderRadius: 12, border: '2px solid var(--border)', cursor: 'pointer', background: 'none', padding: 2 }} />
+                style={{ width: 52, height: 52, borderRadius: 12, border: '2px solid var(--border)',
+                  cursor: 'pointer', background: 'none', padding: 2, flexShrink: 0 }} />
               <div>
-                <p style={{ color: 'var(--text)', fontFamily: 'var(--font-mono)', fontWeight: 700 }}>{genBase.toUpperCase()}</p>
+                <p style={{ color: 'var(--text)', fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: '0.9rem' }}>
+                  {genBase.toUpperCase()}
+                </p>
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>Base color</p>
               </div>
             </div>
-            <button className="btn-primary" onClick={generateFromColor} style={{ padding: '10px 22px' }}>
-              <i className="fa-solid fa-wand-magic-sparkles"></i> Generate Palette (1 credit)
+            <button className="btn-primary" onClick={generateFromColor}
+              style={{ padding: '10px 20px', fontSize: '0.88rem', flex: '1 1 auto', justifyContent: 'center' }}>
+              <i className="fa-solid fa-wand-magic-sparkles"></i> Generate (1 credit)
             </button>
           </div>
         </div>
@@ -309,18 +320,19 @@ function Content() {
 
       {/* ── TAB: Curated ── */}
       {tab === 'curated' && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 12, marginBottom: 24 }}>
           {CURATED.map(p => (
             <motion.div key={p.name} whileHover={{ y: -2 }}
               className="card p-4 cursor-pointer"
               style={{ borderRadius: 'var(--radius-xl)' }}
               onClick={() => { setPalette(p.colors); toast.success(p.name + ' selected!') }}>
-              <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, color: 'var(--text)', marginBottom: 10, fontSize: '0.88rem' }}>
+              <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, color: 'var(--text)',
+                marginBottom: 10, fontSize: '0.86rem' }}>
                 {p.name}
               </p>
-              <div className="flex gap-1">
+              <div style={{ display: 'flex', gap: 4 }}>
                 {p.colors.map(c => (
-                  <div key={c} style={{ flex: 1, height: 40, background: c, borderRadius: 8 }} />
+                  <div key={c} style={{ flex: 1, height: 36, background: c, borderRadius: 6 }} />
                 ))}
               </div>
             </motion.div>
@@ -328,52 +340,61 @@ function Content() {
         </div>
       )}
 
-      {/* ── PALETTE RESULT ── */}
+      {/* ── Palette Result ── */}
       <AnimatePresence>
         {palette.length > 0 && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-            <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
-              <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, color: 'var(--text)' }}>
+
+            {/* Header row */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              flexWrap: 'wrap', gap: 10, marginBottom: 14 }}>
+              <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, color: 'var(--text)', fontSize: '0.95rem' }}>
                 <i className="fa-solid fa-palette mr-2" style={{ color: '#A3B9F8' }}></i>
                 Your Palette ({palette.length} colors)
               </p>
-              <div className="flex gap-2">
+              {/* Export buttons — stack on tiny screens */}
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 <button onClick={exportCSS} style={{
-                  padding: '7px 14px', borderRadius: 10, fontSize: '0.8rem', cursor: 'pointer', fontWeight: 600,
-                  background: 'var(--surface-2)', border: '1px solid var(--border)', color: 'var(--text-muted)',
-                }}>
-                  <i className="fa-solid fa-code mr-1"></i> Copy CSS
+                  padding: '7px 12px', borderRadius: 10, fontSize: '0.78rem', cursor: 'pointer',
+                  fontWeight: 600, background: 'var(--surface-2)', border: '1px solid var(--border)',
+                  color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
+                  <i className="fa-solid fa-code mr-1"></i>
+                  <span className="hidden sm:inline">Copy </span>CSS
                 </button>
                 <button onClick={exportArray} style={{
-                  padding: '7px 14px', borderRadius: 10, fontSize: '0.8rem', cursor: 'pointer', fontWeight: 600,
-                  background: 'var(--surface-2)', border: '1px solid var(--border)', color: 'var(--text-muted)',
-                }}>
-                  <i className="fa-solid fa-brackets-curly mr-1"></i> Copy Array
+                  padding: '7px 12px', borderRadius: 10, fontSize: '0.78rem', cursor: 'pointer',
+                  fontWeight: 600, background: 'var(--surface-2)', border: '1px solid var(--border)',
+                  color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
+                  <i className="fa-solid fa-brackets-curly mr-1"></i>
+                  <span className="hidden sm:inline">Copy </span>Array
                 </button>
               </div>
             </div>
 
-            {/* Large swatches */}
-            <div className="card p-5 mb-4" style={{ borderRadius: 'var(--radius-xl)' }}>
-              <div className="flex gap-3">
-                {palette.map((hex, i) => <ColorSwatch key={i} hex={hex} size="lg" />)}
+            {/* Swatches — responsive flex wrap */}
+            <div className="card p-4 mb-4" style={{ borderRadius: 'var(--radius-xl)' }}>
+              <div style={{ display: 'flex', gap: 'clamp(4px, 1.5vw, 12px)', flexWrap: 'nowrap', overflowX: 'auto',
+                paddingBottom: 4, WebkitOverflowScrolling: 'touch' }}>
+                {palette.map((hex, i) => <ColorSwatch key={i} hex={hex} />)}
               </div>
             </div>
 
-            {/* Full width gradient preview */}
+            {/* Gradient strip */}
             <div style={{
-              height: 60, borderRadius: 14, marginBottom: 16,
+              height: 48, borderRadius: 12, marginBottom: 12,
               background: `linear-gradient(to right, ${palette.join(', ')})`,
               border: '1px solid var(--border)',
             }} />
 
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.78rem', textAlign: 'center', fontFamily: 'var(--font-mono)' }}>
-              Click any swatch to copy HEX · Use HEX / RGB / HSL buttons for other formats
+            {/* Hint */}
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.75rem', textAlign: 'center',
+              fontFamily: 'var(--font-mono)', lineHeight: 1.6 }}>
+              Tap any swatch to copy HEX
+              <span className="hidden sm:inline"> · Use HEX / RGB / HSL buttons for other formats</span>
             </p>
           </motion.div>
         )}
       </AnimatePresence>
-
     </div>
   )
 }

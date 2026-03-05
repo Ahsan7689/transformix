@@ -541,7 +541,7 @@ export default function About() {
                 Transformix is open source. Found a bug? Have a feature idea? Pull requests and issues are always welcome.
               </p>
             </div>
-            <a href="https://github.com/YOUR_USERNAME/transformix" target="_blank" rel="noopener noreferrer"
+            <a href="https://github.com/Ahsan7689/transformix.git" target="_blank" rel="noopener noreferrer"
               className="btn-outline flex-shrink-0" style={{ whiteSpace: 'nowrap' }}>
               <i className="fa-brands fa-github"></i> View on GitHub
             </a>
