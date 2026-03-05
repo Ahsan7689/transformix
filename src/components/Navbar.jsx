@@ -73,8 +73,8 @@ export default function Navbar() {
             <img
               src="https://rzhnxywqmlbvldmqmmsi.supabase.co/storage/v1/object/public/Content/Untitled%20design.png"
               alt="Transformix"
-              height="48"
-              style={{ display: 'block', flexShrink: 0, objectFit: 'contain', maxHeight: 48 }}
+              height="56"
+              style={{ display: 'block', flexShrink: 0, objectFit: 'contain', maxHeight: 56 }}
             />
           </Link>
 
